@@ -121,7 +121,7 @@ class SelectionView: UIView {
         let disable = delegate?.selectionView?(self, disable: index) ?? false
         
         if !disable {
-            moveUnderline(moveTo: sender.layer.frame.origin.x)
+            moveUnderline(moveTo: sender.frame.origin.x)
             delegate?.selectionView?(self, didSelect: buttons.firstIndex(of: sender)!)
         }
     }
