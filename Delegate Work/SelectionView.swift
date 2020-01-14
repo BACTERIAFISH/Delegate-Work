@@ -22,25 +22,25 @@ protocol SelectionViewDataSource: AnyObject {
     func colorForUnderline(_ selectionView: SelectionView) -> UIColor
 }
 
-protocol SelectionViewDelegate: AnyObject {
+@objc protocol SelectionViewDelegate: AnyObject {
     
-    func selectionView(_ selectionView: SelectionView, didSelect selection: Int)
+    @objc optional func selectionView(_ selectionView: SelectionView, didSelect selection: Int)
     
-    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool
+    @objc optional func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool
 }
 
-extension SelectionViewDelegate {
-    
-    func selectionView(_ selectionView: SelectionView, didSelect selection: Int) {}
-    
-    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool {
-        return false
-    }
-}
+//extension SelectionViewDelegate {
+//    
+//    func selectionView(_ selectionView: SelectionView, didSelect selection: Int) {}
+//    
+//    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool {
+//        return false
+//    }
+//}
 
 class SelectionView: UIView {
     
-    var dataSource: SelectionViewDataSource? {
+    weak var dataSource: SelectionViewDataSource? {
         didSet {
             setButtons()
             setUnderline()
@@ -48,7 +48,7 @@ class SelectionView: UIView {
         }
     }
     
-    var delegate: SelectionViewDelegate?
+    weak var delegate: SelectionViewDelegate?
     
     private let stackView: UIStackView = {
         let stack = UIStackView()
@@ -72,7 +72,8 @@ class SelectionView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        //fatalError("init(coder:) has not been implemented")
     }
     
     private func setButtons() {
@@ -117,11 +118,11 @@ class SelectionView: UIView {
     
     @objc private func pressed(sender: UIButton) {
         let index = buttons.firstIndex(of: sender)!
-        let disable = delegate?.selectionView(self, disable: index) ?? false
+        let disable = delegate?.selectionView?(self, disable: index) ?? false
         
         if !disable {
             moveUnderline(moveTo: sender.layer.frame.origin.x)
-            delegate?.selectionView(self, didSelect: buttons.firstIndex(of: sender)!)
+            delegate?.selectionView?(self, didSelect: buttons.firstIndex(of: sender)!)
         }
     }
     

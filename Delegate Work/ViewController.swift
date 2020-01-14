@@ -102,24 +102,24 @@ extension ViewController: SelectionViewDataSource {
 
 extension ViewController: SelectionViewDelegate {
     
-    func selectionView(_ selectionView: SelectionView, didSelect selection: Int) {
-        if selectionView == selectionView1 {
-            selected1 = selection
-            show1.backgroundColor = colors1[selection].color
-        } else if selectionView == selectionView2 {
-            selected2 = selection
-            show2.backgroundColor = colors2[selection].color
-        }
-    }
-    
-    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool {
-        if selectionView == selectionView2 {
-            if selected1 == colors1.count - 1 {
-                return true
-            }
-        }
-        
-        return false
-    }
+//    func selectionView(_ selectionView: SelectionView, didSelect selection: Int) {
+//        if selectionView == selectionView1 {
+//            selected1 = selection
+//            show1.backgroundColor = colors1[selection].color
+//        } else if selectionView == selectionView2 {
+//            selected2 = selection
+//            show2.backgroundColor = colors2[selection].color
+//        }
+//    }
+//
+//    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool {
+//        if selectionView == selectionView2 {
+//            if selected1 == colors1.count - 1 {
+//                return true
+//            }
+//        }
+//
+//        return false
+//    }
     
 }
