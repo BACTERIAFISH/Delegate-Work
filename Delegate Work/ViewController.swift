@@ -73,7 +73,7 @@ extension ViewController: SelectionViewDataSource {
         }
     }
     
-    func selectionView(_ selectionView: SelectionView, titleForSelection selection: Int) -> String? {
+    func selectionView(_ selectionView: SelectionView, titleForSelection selection: Int) -> String {
         if selectionView == selectionView1 {
             return colors1[selection].title
         } else {

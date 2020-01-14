@@ -13,7 +13,7 @@ protocol SelectionViewDataSource: AnyObject {
     
     func numberOfSelections(_ selectionView: SelectionView) -> Int
     
-    func selectionView(_ selectionView: SelectionView, titleForSelection selection: Int) -> String?
+    func selectionView(_ selectionView: SelectionView, titleForSelection selection: Int) -> String
     
     func selectionView(_ selectionView: SelectionView, colorForSelectionTitle selection: Int) -> UIColor
     
@@ -29,14 +29,28 @@ protocol SelectionViewDataSource: AnyObject {
     @objc optional func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool
 }
 
-//extension SelectionViewDelegate {
-//    
-//    func selectionView(_ selectionView: SelectionView, didSelect selection: Int) {}
-//    
-//    func selectionView(_ selectionView: SelectionView, disable selection: Int) -> Bool {
-//        return false
-//    }
-//}
+extension SelectionViewDataSource {
+    
+    func numberOfSelections(_ selectionView: SelectionView) -> Int {
+        return 2
+    }
+    
+    func selectionView(_ selectionView: SelectionView, titleForSelection selection: Int) -> String {
+        return ""
+    }
+    
+    func selectionView(_ selectionView: SelectionView, colorForSelectionTitle selection: Int) -> UIColor {
+        return .white
+    }
+    
+    func selectionView(_ selectionView: SelectionView, fontForSelectionTitle selection: Int) -> UIFont {
+        return UIFont.systemFont(ofSize: 18)
+    }
+    
+    func colorForUnderline(_ selectionView: SelectionView) -> UIColor {
+        return .systemBlue
+    }
+}
 
 class SelectionView: UIView {
     
@@ -78,15 +92,17 @@ class SelectionView: UIView {
     
     private func setButtons() {
         
-        let numbers = dataSource?.numberOfSelections(self) ?? 2
+        guard let dataSource = dataSource else { return }
+        
+        let numbers = dataSource.numberOfSelections(self)
         
         for i in 0..<numbers {
             let button = UIButton()
             button.translatesAutoresizingMaskIntoConstraints = false
             button.backgroundColor = .gray
-            button.setTitle(dataSource?.selectionView(self, titleForSelection: i) ?? "test", for: .normal)
-            button.setTitleColor(dataSource?.selectionView(self, colorForSelectionTitle: i) ?? UIColor.white, for: .normal)
-            button.titleLabel?.font = dataSource?.selectionView(self, fontForSelectionTitle: i) ?? UIFont.systemFont(ofSize: 18)
+            button.setTitle(dataSource.selectionView(self, titleForSelection: i), for: .normal)
+            button.setTitleColor(dataSource.selectionView(self, colorForSelectionTitle: i), for: .normal)
+            button.titleLabel?.font = dataSource.selectionView(self, fontForSelectionTitle: i)
             button.addTarget(self, action: #selector(pressed(sender:)), for: .touchUpInside)
             stackView.addArrangedSubview(button)
             buttons.append(button)
@@ -96,12 +112,14 @@ class SelectionView: UIView {
     }
     
     private func setUnderline() {
+        guard let dataSource = dataSource else { return }
         underline.translatesAutoresizingMaskIntoConstraints = false
-        underline.backgroundColor = dataSource?.colorForUnderline(self) ?? UIColor.systemBlue
+        underline.backgroundColor = dataSource.colorForUnderline(self)
         self.addSubview(underline)
     }
     
     private func setConstraints() {
+        guard let _ = dataSource else { return }
         underlineLeadingConstraint = underline.leadingAnchor.constraint(equalTo: leadingAnchor)
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -121,7 +139,7 @@ class SelectionView: UIView {
         let disable = delegate?.selectionView?(self, disable: index) ?? false
         
         if !disable {
-            moveUnderline(moveTo: sender.frame.origin.x)
+            moveUnderline(moveTo: stackView.bounds.width * CGFloat(index) / CGFloat(buttons.count))
             delegate?.selectionView?(self, didSelect: buttons.firstIndex(of: sender)!)
         }
     }
